@@ -10,9 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bonjour": "^3.3.0",
     "express": "^5.1.0",
-    "mdns": "^2.7.2",
+    "multicast-dns": "^7.2.5",
     "ws": "^8.18.1"
   },
   "description": ""

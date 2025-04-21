@@ -10,8 +10,10 @@ if (!"WebSocket" in window) {
     "WebSocket is NOT supported by your Browser so you cannot use external devices!"
   );
 }
-var timeWebSocket = new WebSocket("ws://music.local:8001/beat");
-var notesWebSocket = new WebSocket("ws://music.local:8002/note");
+
+var timeWebSocket = new WebSocket("wss://notesound.up.railway.app:8001/beat");
+var notesWebSocket = new WebSocket("wss://notesound.up.railway.app:8002/note");
+
 
 
 timeWebSocket.onclose = function () {
