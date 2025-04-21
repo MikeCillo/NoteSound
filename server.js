@@ -5,7 +5,7 @@ const path = require('path');
 // const bonjour = require('bonjour')(); // Commentato per Railway
 const WebSocket = require('ws');
 
-const PORT = process.env.PORT || 8000;  // Usato per Railway
+const PORT = process.env.PORT || 8080;  // Usato per Railway
 const PUBLIC_DIR = path.join(__dirname, 'public'); // Cambiato a 'public'
 
 const server = http.createServer((req, res) => {
@@ -38,7 +38,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🚀 Interfaccia web disponibile su http://localhost:${PORT}`);
+  console.log(`🚀 Interfaccia web disponibile su https://notesound.up.railway.app`); // URL pubblico di Railway
   // mDNS non è necessario su Railway, quindi questa parte è stata rimossa:
   // console.log(`🌍 oppure via mDNS su http://music.local:${PORT}`);
 });
@@ -52,11 +52,12 @@ server.listen(PORT, () => {
 // }
 
 // Configurazione WebSocket
+// Sostituisci localhost con l'URL pubblico di Railway per l'host WebSocket
 const wssBeat = new WebSocket.Server({ port: 8001, host: '0.0.0.0', path: '/beat' });
 const wssNote = new WebSocket.Server({ port: 8002, host: '0.0.0.0', path: '/note' });
 
-console.log(`✅ WebSocket server attivo su ws://localhost:8001 per /beat`);
-console.log(`✅ WebSocket server attivo su ws://localhost:8002 per /note`);
+console.log(`✅ WebSocket server attivo su ws://notesound.up.railway.app:8001 per /beat`);
+console.log(`✅ WebSocket server attivo su ws://notesound.up.railway.app:8002 per /note`);
 
 // Le seguenti righe sono commentate per Railway (mDNS non disponibile)
 //
