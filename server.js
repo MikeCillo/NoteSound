@@ -1,11 +1,11 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const mdns = require('mdns');
+// const mdns = require('mdns');    // Commentato per Railway
+// const bonjour = require('bonjour')(); // Commentato per Railway
 const WebSocket = require('ws');
-const bonjour = require('bonjour')(); // 👈 importa bonjour
 
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;  // Usato per Railway
 const PUBLIC_DIR = path.join(__dirname, 'public'); // Cambiato a 'public'
 
 const server = http.createServer((req, res) => {
@@ -39,35 +39,36 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log(`🚀 Interfaccia web disponibile su http://localhost:${PORT}`);
-  console.log(`🌍 oppure via mDNS su http://music.local:${PORT}`);
+  // mDNS non è necessario su Railway, quindi questa parte è stata rimossa:
+  // console.log(`🌍 oppure via mDNS su http://music.local:${PORT}`);
 });
 
-try {
-  const ad = mdns.createAdvertisement(mdns.tcp('http'), PORT, { name: 'music' });
-  ad.start();
-} catch (err) {
-  console.warn('⚠️ mDNS non disponibile:', err.message);
-}
+// Le seguenti righe sono commentate perché non funzionano su Railway
+// try {
+//   const ad = mdns.createAdvertisement(mdns.tcp('http'), PORT, { name: 'music' });
+//   ad.start();
+// } catch (err) {
+//   console.warn('⚠️ mDNS non disponibile:', err.message);
+// }
 
 // Configurazione WebSocket
 const wssBeat = new WebSocket.Server({ port: 8001, host: '0.0.0.0', path: '/beat' });
 const wssNote = new WebSocket.Server({ port: 8002, host: '0.0.0.0', path: '/note' });
-const wssBPM = new WebSocket.Server({ port: 8003, host: '0.0.0.0', path: '/bpm' }); // WebSocket per cambiare BPM
 
 console.log(`✅ WebSocket server attivo su ws://localhost:8001 per /beat`);
 console.log(`✅ WebSocket server attivo su ws://localhost:8002 per /note`);
-console.log(`✅ WebSocket server attivo su ws://localhost:8003 per /bpm`);
 
-// 🔊 Annuncia i servizi via mDNS con bonjour
-bonjour.publish({ name: 'music-beat', type: 'http', port: 8001, host: 'music.local' });
-bonjour.publish({ name: 'music-note', type: 'http', port: 8002, host: 'music.local' });
-bonjour.publish({ name: 'music-bpm', type: 'http', port: 8003, host: 'music.local' });
-
-console.log('🌍 mDNS pubblicato come music.local per /beat, /note e /bpm');
-console.log('🔗 Accessibile da altri dispositivi in rete come:');
-console.log('   👉 ws://music.local:8001/beat');
-console.log('   👉 ws://music.local:8002/note');
-console.log('   👉 ws://music.local:8003/bpm');
+// Le seguenti righe sono commentate per Railway (mDNS non disponibile)
+//
+// bonjour.publish({ name: 'music-beat', type: 'http', port: 8001, host: 'music.local' });
+// bonjour.publish({ name: 'music-note', type: 'http', port: 8002, host: 'music.local' });
+// bonjour.publish({ name: 'music-bpm', type: 'http', port: 8003, host: 'music.local' });
+//
+// console.log('🌍 mDNS pubblicato come music.local per /beat, /note e /bpm');
+// console.log('🔗 Accessibile da altri dispositivi in rete come:');
+// console.log('   👉 ws://music.local:8001/beat');
+// console.log('   👉 ws://music.local:8002/note');
+// console.log('   👉 ws://music.local:8003/bpm');
 
 // === Logica per gestire le informazioni sui beat ===
 
@@ -110,9 +111,6 @@ wssBeat.on('connection', (ws) => {
     });
   });  
 });
-
-
-  
 
 // Ascolta i messaggi dei client per inoltrare note o altri messaggi
 wssNote.on('connection', (ws) => {
